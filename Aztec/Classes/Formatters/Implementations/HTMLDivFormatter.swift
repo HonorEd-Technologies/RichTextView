@@ -29,7 +29,9 @@ class HTMLDivFormatter: ParagraphAttributeFormatter {
 
         let newProperty = HTMLDiv(with: representation)
         newParagraphStyle.appendProperty(newProperty)
-
+        newParagraphStyle.regularParagraphSpacing = 0
+        newParagraphStyle.regularParagraphSpacingBefore = 0
+        
         var resultingAttributes = attributes
         resultingAttributes[.paragraphStyle] = newParagraphStyle
         return resultingAttributes
