@@ -14,11 +14,47 @@ open class TextList: ParagraphProperty {
         case ordered
         case unordered
 
-        func markerText(forItemNumber number: Int) -> String {
+        func markerText(forItemNumber number: Int, listDepth: Int) -> String {
             switch self {
-            case .ordered:      return "\(number)."
-            case .unordered:    return "\u{2022}"
+            case .ordered:
+                switch listDepth%3 {
+                case 1:
+                    return "\(number)."
+                case 2:
+                    return "\(intToAlphabeticIndex(from: number))."
+                default:
+                    return "\(intToRomanIndex(from: number))."
+                }
+            case .unordered:
+                switch listDepth%3 {
+                case 1:
+                    return "\u{2022}"
+                case 2:
+                    return "\u{25E6}"
+                default:
+                    return "\u{25AA}"
+                }
             }
+        }
+        func intToAlphabeticIndex(from num: Int) -> String {
+            let letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+            let module = num % 26 // which letter, int = 1
+            let numOfLetters = module == 0 ? Int(num / 26) : Int(num / 26) + 1
+            let pickedLetter = module == 0 ? letters[25] : letters[module - 1]
+            return String(repeating: pickedLetter, count: numOfLetters)
+        }
+
+        func intToRomanIndex(from num: Int) -> String {
+            let alphabet: KeyValuePairs = [1000: "m", 900: "cm", 500: "d", 400: "cd", 100: "c", 90: "xc", 50: "l", 40: "xl", 10: "x", 9: "ix", 5: "v", 4: "iv", 1: "i"]
+            var val = num
+            var result = ""
+            for (int, rom) in alphabet {
+                while val >= int {
+                    val -= int
+                    result += rom
+                }
+            }
+            return result
         }
     }
 

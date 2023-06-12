@@ -234,7 +234,7 @@ private extension LayoutManager {
                 }
             }
             markerNumber += start
-            let markerString = list.style.markerText(forItemNumber: markerNumber)
+            let markerString = list.style.markerText(forItemNumber: markerNumber, listDepth: paragraphStyle.lists.count)
             drawItem(markerString, in: markerRect, styled: attributes, at: enclosingRange.location)
         }
     }
