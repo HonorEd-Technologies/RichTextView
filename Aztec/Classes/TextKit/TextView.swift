@@ -830,6 +830,7 @@ open class TextView: UITextView {
         
         storage.replaceCharacters(in: range, with: string)
         selectedRange = NSRange(location: finalRange.location + finalRange.length, length: 0)
+        notifyTextViewDidChange()
     }
 
 
