@@ -27,9 +27,14 @@ open class LiFormatter: ParagraphAttributeFormatter {
             newParagraphStyle.setParagraphStyle(paragraphStyle)
         }
         
-        newParagraphStyle.insertProperty(HTMLLi(with: representation), afterLastOfType: TextList.self)
-
-        resultingAttributes[.paragraphStyle] = newParagraphStyle        
+        if let targetIndex = newParagraphStyle.properties.lastIndex(where: { TextList.self == Swift.type(of: $0) }),
+                newParagraphStyle.properties.count > targetIndex + 1,
+                newParagraphStyle.properties[targetIndex + 1] is HTMLLi {
+            resultingAttributes[.paragraphStyle] = newParagraphStyle
+        } else {
+            newParagraphStyle.insertProperty(HTMLLi(with: representation), afterLastOfType: TextList.self)
+            resultingAttributes[.paragraphStyle] = newParagraphStyle
+        }
 
         return resultingAttributes
     }
