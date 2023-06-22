@@ -7,11 +7,11 @@ public class CSSAttribute: Codable {
 
     /// Attribute Name
     ///
-    let name: String
+    public let name: String
 
     /// Attribute Value, if any!
     ///
-    let value: String?
+    public let value: String?
     
     /// The attribute type, if it matches an existing one.
     ///
@@ -29,7 +29,7 @@ public class CSSAttribute: Codable {
         return CSSAttribute(type: .fontStyle, value: FontStyle.italic.rawValue)
     }()
     
-    static let underline: CSSAttribute = {
+    public static let underline: CSSAttribute = {
        return CSSAttribute(type: .textDecoration, value: TextDecoration.underline.rawValue)
     }()
 
