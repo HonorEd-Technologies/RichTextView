@@ -459,7 +459,24 @@ private extension TextStorage {
 
         let newLevel = newStyle?.headers.last?.level ?? .none
         let oldLevel = oldStyle?.headers.last?.level ?? .none
-
+        if newLevel == .none {
+            var resultingAttributes = attrs
+            resultingAttributes[.headingRepresentation] = nil
+            if let font = attrs[.font] as? UIFont {
+                var newFont = font.withSize(CGFloat(oldStyle?.headers.last?.defaultFontSize ?? 14.0))
+                if Configuration.headersWithBoldTrait {
+                    newFont = newFont.modifyTraits(.traitBold, enable: false)
+                    if attrs[.shadow] != nil {
+                        resultingAttributes.removeValue(forKey: .shadow)
+                        resultingAttributes.removeValue(forKey: .kern)
+                        newFont = newFont.modifyTraits(.traitBold, enable: true)
+                    }
+                }
+                resultingAttributes[.font] = newFont
+            }
+            return resultingAttributes
+        }
+        
         guard oldLevel != newLevel && newLevel != .none else {
             return attrs
         }
