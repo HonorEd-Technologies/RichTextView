@@ -143,9 +143,10 @@ open class TextStorage: NSTextStorage {
     
     // MARK: - NSAttributedString preprocessing
 
-    private func preprocessAttributesForInsertion(_ attributedString: NSAttributedString) -> NSAttributedString {
+    private func preprocessAttributesForInsertion(_ attributedString: NSAttributedString, currentRange: NSRange) -> NSAttributedString {
         let stringWithAttachments = preprocessAttachmentsForInsertion(attributedString)
-        let preprocessedString = preprocessHeadingsForInsertion(stringWithAttachments)
+        var preprocessedString = preprocessHeadingsForInsertion(stringWithAttachments)
+        preprocessedString = preprocessListForInsertion(preprocessedString, currentRange: currentRange)
 
         return preprocessedString
     }
@@ -252,6 +253,19 @@ open class TextStorage: NSTextStorage {
 
         return processedString
     }
+    
+    fileprivate func preprocessListForInsertion(_ attributedString: NSAttributedString, currentRange: NSRange) -> NSAttributedString {
+        if textStore.length > 0, attributedString.length > 0, textStore.textListAttribute(atIndex: currentRange.location) != nil {
+            let currentAttrs = attributes(at: currentRange.location, effectiveRange: nil)
+            let processedString = NSMutableAttributedString(attributedString: attributedString)
+            processedString.enumerateAttribute(.paragraphStyle, in: NSRange(location: 0, length: processedString.length), options: []) { (attribute, range, _) in
+                processedString.setAttributes(currentAttrs, range: range)
+            }
+            return processedString
+        } else {
+            return attributedString
+        }
+    }
 
     fileprivate func detectAttachmentRemoved(in range: NSRange) {
         // Ref. https://github.com/wordpress-mobile/AztecEditor-iOS/issues/727:
@@ -305,7 +319,7 @@ open class TextStorage: NSTextStorage {
 
     override open func replaceCharacters(in range: NSRange, with attrString: NSAttributedString) {
 
-        let preprocessedString = preprocessAttributesForInsertion(attrString)
+        let preprocessedString = preprocessAttributesForInsertion(attrString, currentRange: range)
 
         beginEditing()
 
